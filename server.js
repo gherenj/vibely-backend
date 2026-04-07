@@ -3,11 +3,20 @@ const cors = require("cors");
 const axios = require("axios");
 
 const app = express();
+
+// ✅ Middleware
 app.use(cors());
 app.use(express.json());
 
-const API_KEY = "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";
+// ✅ IMPORTANT: API key ko env me rakhna best hai
+const API_KEY = process.env.OPENROUTER_API_KEY || "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";
 
+// ✅ ROOT ROUTE (Error fix: Cannot GET /)
+app.get("/", (req, res) => {
+  res.send("Vibely Backend Running 🚀");
+});
+
+// ✅ MAIN API
 app.post("/generate", async (req, res) => {
   const { niche } = req.body;
 
@@ -25,7 +34,7 @@ app.post("/generate", async (req, res) => {
       },
       {
         headers: {
-          "Authorization": `Bearer ${API_KEY}`,
+          Authorization: `Bearer ${API_KEY}`,
           "Content-Type": "application/json",
         },
       }
@@ -46,4 +55,9 @@ app.post("/generate", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("🚀 Server running"));
+// ✅ IMPORTANT: Render ke liye dynamic port use karo
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
